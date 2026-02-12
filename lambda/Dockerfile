@@ -1,7 +1,7 @@
 FROM public.ecr.aws/lambda/python:3.11
 
 # Install system dependencies for zbar and OpenCV
-RUN dnf install -y \
+RUN yum install -y \
     gcc \
     gcc-c++ \
     make \
@@ -9,7 +9,7 @@ RUN dnf install -y \
     zbar-devel \
     libX11 \
     mesa-libGL \
-    && dnf clean all
+    && yum clean all
 
 # Copy requirements and install Python packages
 COPY requirements.txt ${LAMBDA_TASK_ROOT}/

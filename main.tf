@@ -65,7 +65,7 @@ resource "null_resource" "docker_build_push" {
       $ErrorActionPreference = 'Stop'
       $registry = "${aws_ecr_repository.api.repository_url}" -split '/' | Select-Object -First 1
       aws ecr get-login-password --region ${var.aws_region} | docker login --username AWS --password-stdin $registry
-      docker build -t ${var.project_name}-api:latest "${path.module}/lambda"
+      docker build --platform linux/amd64 --provenance=false -t ${var.project_name}-api:latest "${path.module}/lambda"
       docker tag ${var.project_name}-api:latest "${aws_ecr_repository.api.repository_url}:latest"
       docker push "${aws_ecr_repository.api.repository_url}:latest"
     EOT
