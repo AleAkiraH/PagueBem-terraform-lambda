@@ -40,22 +40,22 @@ variable "log_retention_days" {
 # --- DynamoDB references (from dynamodb outputs) ---
 
 variable "usuarios_table_name" {
-  description = "Name of the Usuarios DynamoDB table"
+  description = "Name of the PagueBem-Usuarios DynamoDB table"
   type        = string
 }
 
 variable "usuarios_table_arn" {
-  description = "ARN of the Usuarios DynamoDB table"
+  description = "ARN of the PagueBem-Usuarios DynamoDB table"
   type        = string
 }
 
-variable "qrcode_itens_table_name" {
-  description = "Name of the QrCodeItens DynamoDB table"
+variable "produtos_table_name" {
+  description = "Name of the PagueBem-Produtos DynamoDB table"
   type        = string
 }
 
-variable "qrcode_itens_table_arn" {
-  description = "ARN of the QrCodeItens DynamoDB table"
+variable "produtos_table_arn" {
+  description = "ARN of the PagueBem-Produtos DynamoDB table"
   type        = string
 }
 

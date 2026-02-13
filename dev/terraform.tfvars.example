@@ -5,14 +5,14 @@ lambda_memory_size      = 512
 log_retention_days      = 14
 
 # Preencher após deploy do DynamoDB (terraform output)
-usuarios_table_name     = "Usuarios-dev"
-usuarios_table_arn      = "arn:aws:dynamodb:us-east-1:ACCOUNT_ID:table/Usuarios-dev"
-qrcode_itens_table_name = "QrCodeItens-dev"
-qrcode_itens_table_arn  = "arn:aws:dynamodb:us-east-1:ACCOUNT_ID:table/QrCodeItens-dev"
+usuarios_table_name     = "PagueBem-Usuarios-dev"
+usuarios_table_arn      = "arn:aws:dynamodb:us-east-1:ACCOUNT_ID:table/PagueBem-Usuarios-dev"
+produtos_table_name     = "PagueBem-Produtos-dev"
+produtos_table_arn      = "arn:aws:dynamodb:us-east-1:ACCOUNT_ID:table/PagueBem-Produtos-dev"
 
 dynamodb_table_arns = [
-  "arn:aws:dynamodb:us-east-1:ACCOUNT_ID:table/Usuarios-dev",
-  "arn:aws:dynamodb:us-east-1:ACCOUNT_ID:table/Usuarios-dev/index/*",
-  "arn:aws:dynamodb:us-east-1:ACCOUNT_ID:table/QrCodeItens-dev",
-  "arn:aws:dynamodb:us-east-1:ACCOUNT_ID:table/QrCodeItens-dev/index/*"
+  "arn:aws:dynamodb:us-east-1:ACCOUNT_ID:table/PagueBem-Usuarios-dev",
+  "arn:aws:dynamodb:us-east-1:ACCOUNT_ID:table/PagueBem-Usuarios-dev/index/*",
+  "arn:aws:dynamodb:us-east-1:ACCOUNT_ID:table/PagueBem-Produtos-dev",
+  "arn:aws:dynamodb:us-east-1:ACCOUNT_ID:table/PagueBem-Produtos-dev/index/*"
 ]

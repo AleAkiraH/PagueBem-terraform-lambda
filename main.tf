@@ -163,7 +163,7 @@ resource "aws_lambda_function" "api" {
       {
         ENVIRONMENT            = var.environment
         USUARIOS_TABLE_NAME    = var.usuarios_table_name
-        QRCODE_ITENS_TABLE_NAME = var.qrcode_itens_table_name
+        PRODUTOS_TABLE_NAME    = var.produtos_table_name
       },
       var.extra_env_vars
     )
