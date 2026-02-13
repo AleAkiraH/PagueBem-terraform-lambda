@@ -25,7 +25,14 @@ def handler(event: Any, context: Any) -> Dict[str, Any]:
     request_context = event.get("requestContext", {})
     http_info = request_context.get("http", {})
     method = http_info.get("method", "UNKNOWN").upper()
-    path = http_info.get("path", "/").rstrip("/") or "/"
+    raw_path = http_info.get("path", "/").rstrip("/") or "/"
+
+    # Remove stage prefix (e.g., /dev/health → /health)
+    stage = request_context.get("stage", "")
+    if stage and raw_path.startswith(f"/{stage}"):
+        path = raw_path[len(f"/{stage}"):] or "/"
+    else:
+        path = raw_path
 
     logger.info("method=%s path=%s", method, path)
 
