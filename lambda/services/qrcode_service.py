@@ -30,30 +30,11 @@ except Exception:
     np = None
 
 
-# Preprocessing transforms for image enhancement
+# Preprocessing transforms for image enhancement (OPTIMIZED - fast only)
 TRANSFORMS = [
     ("orig", lambda im: im),
     ("gray", lambda im: im.convert("L")),
-    (
-        "gray_resize_x2",
-        lambda im: im.convert("L").resize(
-            (im.size[0] * 2, im.size[1] * 2), Image.BICUBIC
-        ),
-    ),
-    (
-        "gray_resize_x3",
-        lambda im: im.convert("L").resize(
-            (im.size[0] * 3, im.size[1] * 3), Image.BICUBIC
-        ),
-    ),
     ("contrast_x2", lambda im: ImageEnhance.Contrast(im.convert("L")).enhance(2.0)),
-    ("sharp_x2", lambda im: ImageEnhance.Sharpness(im).enhance(2.0)),
-    (
-        "contrast_gray_thresh",
-        lambda im: ImageEnhance.Contrast(im.convert("L"))
-        .enhance(2.0)
-        .point(lambda p: 255 if p > 120 else 0),
-    ),
     ("binary", lambda im: im.convert("L").point(lambda p: 255 if p > 128 else 0)),
     ("invert", lambda im: ImageOps.invert(im.convert("L"))),
 ]
@@ -73,15 +54,25 @@ class QrCodeService:
         w, h = img.size
         logger.info("Input image size=%dx%d, mode=%s", w, h, img.mode)
 
+        # OPTIMIZATION: If image is very large, downsample first
+        max_dim = max(w, h)
+        if max_dim > 1000:
+            scale = 1000 / max_dim
+            new_w, new_h = int(w * scale), int(h * scale)
+            logger.info("Downsampling large image to %dx%d", new_w, new_h)
+            img = img.resize((new_w, new_h), Image.LANCZOS)
+
         found = False
         results: List[Dict[str, str]] = []
         used_transform: Optional[str] = None
 
-        for angle in (0, 90, 180, 270):
+        # OPTIMIZATION: Try only 0 and 90 degree rotations (most QR codes)
+        for angle in (0, 90):
             for name, fn in TRANSFORMS:
                 tname = f"{name}_rot{angle}"
                 try:
-                    img_t = fn(img.rotate(angle, expand=True))
+                    rotated = img.rotate(angle, expand=True) if angle != 0 else img
+                    img_t = fn(rotated)
                 except Exception:
                     logger.exception("Transform error for %s", tname)
                     continue
@@ -91,6 +82,7 @@ class QrCodeService:
                     found = True
                     results = decoded
                     used_transform = tname
+                    logger.info("QR found with transform: %s", tname)
                     break
             if found:
                 break

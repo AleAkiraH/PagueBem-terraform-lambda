@@ -22,15 +22,21 @@ class QrCodeController:
         try:
             # Parse body
             body = event.get("body", "")
+            logger.info("Raw body type: %s, content length: %d", type(body), len(str(body)))
+            
             if event.get("isBase64Encoded"):
                 # Raw base64 body from API Gateway
+                logger.info("Processing as base64 encoded body")
                 dto = DecodeRequest(image_base64=body)
             else:
                 if isinstance(body, str):
+                    logger.info("Parsing body as JSON string")
                     body = json.loads(body)
+                logger.info("Creating DecodeRequest from body: %s", list(body.keys()) if isinstance(body, dict) else type(body))
                 dto = DecodeRequest(**body)
 
             # Call service
+            logger.info("Calling QrCodeService.decode_image")
             result = QrCodeService.decode_image(dto.image_base64)
 
             return build_response(200, result)
