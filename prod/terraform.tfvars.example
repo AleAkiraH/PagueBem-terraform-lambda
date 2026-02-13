@@ -3,6 +3,7 @@ aws_region              = "us-east-1"
 lambda_timeout          = 30
 lambda_memory_size      = 512
 log_retention_days      = 30
+jwt_secret              = "YOUR_PRODUCTION_JWT_SECRET_KEY"
 
 # Preencher após deploy do DynamoDB (terraform output)
 usuarios_table_name     = "PagueBem-Usuarios-prod"

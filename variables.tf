@@ -64,6 +64,13 @@ variable "dynamodb_table_arns" {
   type        = list(string)
 }
 
+variable "jwt_secret" {
+  description = "Secret key for JWT token generation and verification"
+  type        = string
+  sensitive   = true
+  default     = "dev-secret-key-change-in-production"
+}
+
 variable "extra_env_vars" {
   description = "Additional environment variables for the Lambda function"
   type        = map(string)

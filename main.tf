@@ -164,6 +164,7 @@ resource "aws_lambda_function" "api" {
         ENVIRONMENT            = var.environment
         USUARIOS_TABLE_NAME    = var.usuarios_table_name
         PRODUTOS_TABLE_NAME    = var.produtos_table_name
+        JWT_SECRET             = var.jwt_secret
       },
       var.extra_env_vars
     )
@@ -179,4 +180,34 @@ resource "aws_lambda_function" "api" {
   tags = {
     Name = "${var.project_name}-api-${var.environment}"
   }
+}
+
+# =============================================================================
+# Force Lambda to update code after every Docker push
+# =============================================================================
+resource "null_resource" "lambda_update_code" {
+  triggers = {
+    docker_build_id = null_resource.docker_build_push.id
+  }
+
+  provisioner "local-exec" {
+    interpreter = ["PowerShell", "-Command"]
+    command     = <<-EOT
+      aws lambda update-function-code `
+        --function-name "${var.project_name}-api-${var.environment}" `
+        --image-uri "${aws_ecr_repository.api.repository_url}:latest" `
+        --region ${var.aws_region} | Out-Null
+      
+      Write-Host "Waiting for Lambda function update to complete..."
+      aws lambda wait function-updated `
+        --function-name "${var.project_name}-api-${var.environment}" `
+        --region ${var.aws_region}
+      Write-Host "Lambda function updated successfully!"
+    EOT
+  }
+
+  depends_on = [
+    aws_lambda_function.api,
+    null_resource.docker_build_push
+  ]
 }

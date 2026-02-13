@@ -11,6 +11,7 @@ import logging
 from typing import Any, Dict
 
 from controller.qrcode_controller import QrCodeController
+from controller.auth_controller import AuthController
 from utils.response import build_response
 
 logger = logging.getLogger()
@@ -41,6 +42,13 @@ def handler(event: Any, context: Any) -> Dict[str, Any]:
         if method == "OPTIONS":
             return build_response(200, {})
 
+        # ── Auth routes ──
+        if path == "/registrar" and method == "POST":
+            return AuthController.registrar(event)
+
+        if path == "/entrar" and method == "POST":
+            return AuthController.entrar(event)
+
         # ── QR Code routes ──
         if path == "/decode" and method == "POST":
             return QrCodeController.decode(event)
@@ -54,3 +62,4 @@ def handler(event: Any, context: Any) -> Dict[str, Any]:
     except Exception as e:
         logger.exception("Unhandled error")
         return build_response(500, {"error": "Internal server error", "details": str(e)})
+
