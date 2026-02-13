@@ -37,6 +37,10 @@ def handler(event: Any, context: Any) -> Dict[str, Any]:
     logger.info("method=%s path=%s", method, path)
 
     try:
+        # ── CORS Preflight ──
+        if method == "OPTIONS":
+            return build_response(200, {})
+
         # ── QR Code routes ──
         if path == "/decode" and method == "POST":
             return QrCodeController.decode(event)
